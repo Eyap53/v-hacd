@@ -21,7 +21,7 @@ bl_info = {
     'description': 'Hierarchical Approximate Convex Decomposition',
     'author': 'Alain Ducharme (Phymec)',
     'version': (0, 2),
-    'blender': (2, 65, 0),
+    'blender': (2, 80, 0),
     'location': '3D View, Tools tab -> V-HACD, in Object mode',
     'warning': "Requires Khaled Mamou's V-HACD v2.0 textVHACD executable: (see documentation)",
     'wiki_url': 'http://code.google.com/p/v-hacd/',
@@ -73,12 +73,12 @@ class VHACD(bpy.types.Operator):
 
     # -------------------
     # pre-process options
-    remove_doubles = BoolProperty(
+    remove_doubles : BoolProperty(
             name = 'Remove Doubles',
             description = 'Collapse overlapping vertices in generated mesh',
             default = True)
 
-    apply_transforms = EnumProperty(
+    apply_transforms : EnumProperty(
             name = 'Apply',
             description = 'Apply Transformations to generated mesh',
             items = (
@@ -91,52 +91,52 @@ class VHACD(bpy.types.Operator):
 
     # ---------------
     # VHACD parameters
-    resolution = IntProperty(
+    resolution : IntProperty(
             name = 'Voxel Resolution',
             description = 'Maximum number of voxels generated during the voxelization stage',
             default = 100000, min = 10000, max = 64000000)
 
-    depth = IntProperty(
+    depth : IntProperty(
             name = 'Clipping Depth',
             description = 'Maximum number of clipping stages. During each split stage, all the model parts (with a concavity higher than the user defined threshold) are clipped according the "best" clipping plane',
             default = 20, min = 1, max = 32)
 
-    concavity = FloatProperty(
+    concavity : FloatProperty(
             name = 'Maximum Concavity',
             description = 'Maximum concavity',
             default = 0.0025, min = 0.0, max = 1.0, precision = 4)
 
-    planeDownsampling = IntProperty(
+    planeDownsampling : IntProperty(
             name = 'Plane Downsampling',
             description = 'Granularity of the search for the "best" clipping plane',
             default = 4, min = 1, max = 16)
 
-    convexhullDownsampling = IntProperty(
+    convexhullDownsampling : IntProperty(
             name = 'Convex Hull Downsampling',
             description = 'Precision of the convex-hull generation process during the clipping plane selection stage',
             default = 4, min = 1, max = 16)
 
-    alpha = FloatProperty(
+    alpha : FloatProperty(
             name = 'Alpha',
             description = 'Bias toward clipping along symmetry planes',
             default = 0.05, min = 0.0, max = 1.0, precision = 4)
 
-    beta = FloatProperty(
+    beta : FloatProperty(
             name = 'Beta',
             description = 'Bias toward clipping along revolution axes',
             default = 0.05, min = 0.0, max = 1.0, precision = 4)
 
-    gamma = FloatProperty(
+    gamma : FloatProperty(
             name = 'Gamma',
             description = 'Maximum allowed concavity during the merge stage',
             default = 0.00125, min = 0.0, max = 1.0, precision = 5)
 
-    pca = BoolProperty(
+    pca : BoolProperty(
             name = 'PCA',
             description = 'Enable/disable normalizing the mesh before applying the convex decomposition',
             default = False)
 
-    mode = EnumProperty(
+    mode : EnumProperty(
             name = 'ACD Mode',
             description = 'Approximate convex decomposition mode',
             items = (
@@ -144,39 +144,39 @@ class VHACD(bpy.types.Operator):
                 ('TETRAHEDRON', 'Tetrahedron', 'Tetrahedron ACD Mode')),
             default = 'VOXEL')
 
-    maxNumVerticesPerCH = IntProperty(
+    maxNumVerticesPerCH : IntProperty(
             name = 'Maximum Vertices Per CH',
             description = 'Maximum number of vertices per convex-hull',
             default = 32, min = 4, max = 1024)
 
-    minVolumePerCH = FloatProperty(
+    minVolumePerCH : FloatProperty(
             name = 'Minimum Volume Per CH',
             description = 'Minimum volume to add vertices to convex-hulls',
             default = 0.0001, min = 0.0, max = 0.01, precision = 5)
 
     # -------------------
     # post-process options
-    show_transparent = BoolProperty(
+    show_transparent : BoolProperty(
             name = 'Show Transparent',
             description = 'Enable transparency for ACD hulls',
             default=True)
 
-    use_generated = BoolProperty(
+    use_generated : BoolProperty(
             name = 'Use Generated Mesh',
             description = 'Use triangulated mesh generated for V-HACD (for game engine visuals; otherwise use original object)',
             default=True)
 
-    hide_render = BoolProperty(
+    hide_render : BoolProperty(
             name = 'Hide Render',
             description = 'Disable rendering of convex hulls (for game engine)',
             default=True)
 
-    mass_com = BoolProperty(
+    mass_com : BoolProperty(
             name = 'Center of Mass',
             description = 'Calculate physics mass and set center of mass (origin) based on volume and density (best to apply rotation and scale)',
             default=True)
 
-    density = FloatProperty(
+    density : FloatProperty(
             name = 'Density',
             description = 'Material density used to calculate mass from volume',
             default = 10.0, min = 0.0)
@@ -207,7 +207,7 @@ class VHACD(bpy.types.Operator):
             self.report({'ERROR'}, 'Object(s) must be selected first')
             return {'CANCELLED'}
         for ob in selected:
-            ob.select = False
+            ob.select_set(state = False)
 
         new_objects = []
         for ob in selected:
@@ -293,7 +293,7 @@ class VHACD(bpy.types.Operator):
 
             for hull in imported:
                 # Make hull a compound rigid body
-                hull.select = False
+                hull.select_set(state = False)
                 hull.show_transparent = self.show_transparent
                 if self.mass_com:
                     for vert in hull.data.vertices:
@@ -330,10 +330,10 @@ class VHACD(bpy.types.Operator):
 
         if len(new_objects):
             for ob in new_objects:
-                ob.select = True
+                ob.select_set(state = True)
         else:
             for ob in selected:
-                ob.select = True
+                ob.select_set(state = True)
             self.report({'WARNING'}, 'No meshes to process!')
             return {'CANCELLED'}
 
@@ -346,14 +346,14 @@ class VHACD(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         col = layout.column()
-        col.label('Pre-Processing Options (generated mesh):')
+        col.label(text = 'Pre-Processing Options (generated mesh):')
         row = col.row()
         row.prop(self, 'remove_doubles')
         row.prop(self, 'apply_transforms')
 
         layout.separator()
         col = layout.column()
-        col.label('V-HACD Parameters:')
+        col.label(text = 'V-HACD Parameters:')
         col.prop(self, 'resolution')
         col.prop(self, 'depth')
         col.prop(self, 'concavity')
@@ -371,7 +371,7 @@ class VHACD(bpy.types.Operator):
 
         layout.separator()
         col = layout.column()
-        col.label('Post-Processing Options:')
+        col.label(text = 'Post-Processing Options:')
         row = col.row()
         row.prop(self, 'show_transparent')
         row.prop(self, 'use_generated')
@@ -382,16 +382,16 @@ class VHACD(bpy.types.Operator):
 
         layout.separator()
         col = layout.column()
-        col.label('WARNING:', icon='ERROR')
-        col.label(' -> Processing can take several minutes per object!')
-        col.label(' -> ALL selected objects will be processed sequentially!')
-        col.label(' -> Game Engine physics compound generated for each object')
-        col.label(' -> See Console Window for progress..,')
+        col.label(text = 'WARNING:', icon='ERROR')
+        col.label(text = ' -> Processing can take several minutes per object!')
+        col.label(text = ' -> ALL selected objects will be processed sequentially!')
+        col.label(text = ' -> Game Engine physics compound generated for each object')
+        col.label(text= ' -> See Console Window for progress..,')
 
 class VIEW3D_PT_tools_vhacd(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Tools'
+    bl_region_type = 'UI'
+    bl_category = 'VHACD'
     bl_label = 'V-HACD'
     bl_context = 'objectmode'
     bl_options = {'DEFAULT_CLOSED'}
@@ -400,8 +400,8 @@ class VIEW3D_PT_tools_vhacd(bpy.types.Panel):
         layout = self.layout
         row = layout.row(align=True)
         row.menu('VHACD_MT_path_presets', text=bpy.types.VHACD_MT_path_presets.bl_label)
-        row.operator('scene.vhacd_preset_add', text='', icon='ZOOMIN')
-        row.operator('scene.vhacd_preset_add', text='', icon='ZOOMOUT').remove_active = True
+        row.operator(AddPresetVHACD.bl_idname, text='', icon='ADD')
+        row.operator(AddPresetVHACD.bl_idname, text='', icon='REMOVE').remove_active = True
         col = layout.column()
         col.prop(context.scene.vhacd, 'vhacd_path')
         col.prop(context.scene.vhacd, 'data_path')
@@ -409,7 +409,7 @@ class VIEW3D_PT_tools_vhacd(bpy.types.Panel):
 
 class AddPresetVHACD(AddPresetBase, bpy.types.Operator):
     '''Add V-HACD Paths Preset'''
-    bl_idname = 'scene.vhacd_preset_add'
+    bl_idname = 'vhacd.preset_add'
     bl_label = 'Add VHACD Path Preset'
     preset_menu = 'VHACD_MT_path_presets'
 
@@ -433,8 +433,7 @@ class VHACDPaths(bpy.types.PropertyGroup):
         bpy.types.Scene.vhacd = PointerProperty(
                 name = 'V-HACD Settings',
                 description = 'V-HACD settings',
-                type = cls,
-                )
+                type = cls)
         cls.vhacd_path = StringProperty(
                 name = 'VHACD Path',
                 description = 'Path to testVHACD executable',
@@ -451,7 +450,15 @@ class VHACDPaths(bpy.types.PropertyGroup):
             del bpy.types.Scene.vhacd
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(VHACD)
+    bpy.utils.register_class(VIEW3D_PT_tools_vhacd)
+    bpy.utils.register_class(AddPresetVHACD)
+    bpy.utils.register_class(VHACD_MT_path_presets)
+    bpy.utils.register_class(VHACDPaths)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(VHACDPaths)
+    bpy.utils.unregister_class(VHACD_MT_path_presets)
+    bpy.utils.unregister_class(AddPresetVHACD)
+    bpy.utils.unregister_class(VIEW3D_PT_tools_vhacd)
+    bpy.utils.unregister_class(VHACD)
