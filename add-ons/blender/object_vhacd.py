@@ -214,13 +214,11 @@ class VHACD(bpy.types.Operator):
             filename = ''.join(c for c in ob.name if c.isalnum() or c in (' ','.','_')).rstrip()
 
             off_filename = os_path.join(data_path, '{}.off'.format(filename))
-            outFileName = os_path.join(data_path, '{}.wrl'.format(filename))
+            outFileName = os_path.join(data_path, '{}.obj'.format(filename))
             logFileName = os_path.join(data_path, '{}_log.txt'.format(filename))
 
-            try:
-                mesh = ob.to_mesh(context.scene, True, 'PREVIEW', calc_tessface=False)
-            except:
-                continue
+            
+            mesh = ob.to_mesh(depsgraph = context.depsgraph, apply_modifiers = True)
 
             translation, quaternion, scale = ob.matrix_world.decompose()
             scale_matrix = Matrix(((scale.x,0,0,0),(0,scale.y,0,0),(0,0,scale.z,0),(0,0,0,1)))
@@ -231,13 +229,13 @@ class VHACD(bpy.types.Operator):
                 pre_matrix = Matrix()
                 post_matrix = scale_matrix
             if self.apply_transforms in ['RS', 'LRS']:
-                pre_matrix = quaternion.to_matrix().to_4x4() * pre_matrix
+                pre_matrix = quaternion.to_matrix().to_4x4() @ pre_matrix
             else:
-                post_matrix = quaternion.to_matrix().to_4x4() * post_matrix
+                post_matrix = quaternion.to_matrix().to_4x4() @ post_matrix
             if self.apply_transforms == 'LRS':
-                pre_matrix = Matrix.Translation(translation) * pre_matrix
+                pre_matrix = Matrix.Translation(translation) @ pre_matrix
             else:
-                post_matrix = Matrix.Translation(translation) * post_matrix
+                post_matrix = Matrix.Translation(translation) @ post_matrix
 
             mesh.transform(pre_matrix)
 
@@ -277,8 +275,8 @@ class VHACD(bpy.types.Operator):
             if self.mass_com:
                 mass, com = physics_mass_center(mesh)
                 mass *= self.density
-                post_matrix = Matrix.Translation(com * post_matrix) * post_matrix
-                pre_matrix = Matrix.Translation(-com) * pre_matrix
+                post_matrix = Matrix.Translation(com @ post_matrix) @ post_matrix
+                pre_matrix = Matrix.Translation(-com) @ pre_matrix
             if not self.use_generated:
                 bpy.data.meshes.remove(mesh)
 
@@ -286,7 +284,7 @@ class VHACD(bpy.types.Operator):
             if not os_path.exists(outFileName):
                 continue
 
-            bpy.ops.import_scene.x3d(filepath=outFileName, axis_forward='Y', axis_up='Z')
+            bpy.ops.import_scene.obj(filepath=outFileName, axis_forward='Y', axis_up='Z')
             imported = bpy.context.selected_objects
             new_objects.extend(imported)
             parent = None
@@ -298,25 +296,18 @@ class VHACD(bpy.types.Operator):
                 if self.mass_com:
                     for vert in hull.data.vertices:
                         vert.co -= com
-                hull.game.physics_type = 'RIGID_BODY'
-                hull.game.use_collision_bounds = True
-                hull.game.collision_bounds_type = 'CONVEX_HULL'
-                hull.game.mass = mass
-                hull.game.use_collision_compound = True
                 hull.hide_render = self.hide_render
                 if not parent:
                     # Use first hull as compound parent
                     parent = hull
                     hull.matrix_basis = post_matrix
                     # Attach visual mesh as child...
-                    ob.game.physics_type = 'NO_COLLISION'
                     if self.use_generated:
                         if self.mass_com:
                             for vert in mesh.vertices:
                                 vert.co -= com
                         obc = bpy.data.objects.new(ob.name + '_GM', mesh)
-                        bpy.context.scene.objects.link(obc)
-                        obc.game.physics_type = 'NO_COLLISION'
+                        bpy.context.collection.objects.link(obc)
                         obc.parent = parent
                         new_objects.append(obc)
                     else:
@@ -328,7 +319,7 @@ class VHACD(bpy.types.Operator):
                 hull.name = hull.name.replace('ShapeIndexedFaceSet', new_name)
                 hull.data.name = hull.data.name.replace('ShapeIndexedFaceSet', new_name)
 
-        if len(new_objects):
+        if len(new_objects) > 0:
             for ob in new_objects:
                 ob.select_set(state = True)
         else:
