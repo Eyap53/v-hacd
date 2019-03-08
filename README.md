@@ -34,8 +34,8 @@ A second approach consists in computing an exact convex decomposition of a surfa
 # Finding the Addon in the interface
 If you can't find the addon in the interface, look at the right hand side while in Object mode, in the top right next to teh viewpoint widget you should see a small arrow and be able to drag out a view with some tabs that will at least include "View", but also hopefully VHACD itself here.
 
-![before]("before.png" "on the right hand side in blender, before pulling it out")
-![after]("after.png" "on the right hand side in blender, after pulling it out")
+![before](before.png "on the right hand side in blender, before pulling it out")
+![after](after.png "on the right hand side in blender, after pulling it out")
 
 # More approximate convex decomposition results
 ![V-HACD Results (1/4)](https://raw.githubusercontent.com/kmammou/v-hacd/master/doc/snapshots_1.png)
