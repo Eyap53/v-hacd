@@ -16,7 +16,7 @@ A second approach consists in computing an exact convex decomposition of a surfa
 
 1. Clone this Github repository
 1. You may either rebuild the binaries for your machine or use the provided binaries.  Here we will assume that you will use the provided binaries in the v-hacd/bin directory.
-1. Copy the Python script in v-hacd/add-ons/blender/object_vhacd.py to your Blender addons directory.  For Blender 2.78 this directory will be "Blender Foundation/Blender/2.78/scripts/addons/".  You're at the right place if you see other scripts prefixed with object\_.
+1. Copy the Python script in v-hacd/add-ons/blender/object_vhacd.py to your Blender addons directory.  For Blender 2.8 this directory will be "Blender Foundation/Blender/2.8/scripts/addons/".  You're at the right place if you see other scripts prefixed with object\_.
 1. The addon must be enabled before use.  After copying the script to the addons directory, open Blender and navigate to File > User Preferences > Add-ons.  Object: V-HACD will be featured on the list.  Check its mark to enable the addon and save user settings.
 
 # Using the Addon
@@ -30,6 +30,12 @@ A second approach consists in computing an exact convex decomposition of a surfa
 1. Select the V-HACD button at the button of the panel.  You will be presented with some options.
 1. Modify the options as desired and select "OK."
 1. Note that the processing may take some time.  Increasing voxel resolution will particularly increase runtime.
+
+# Finding the Addon in the interface
+If you can't find the addon in the interface, look at the right hand side while in Object mode, in the top right next to teh viewpoint widget you should see a small arrow and be able to drag out a view with some tabs that will at least include "View", but also hopefully VHACD itself here.
+
+![before]("before.png" "on the right hand side in blender, before pulling it out")
+![after]("after.png" "on the right hand side in blender, after pulling it out")
 
 # More approximate convex decomposition results
 ![V-HACD Results (1/4)](https://raw.githubusercontent.com/kmammou/v-hacd/master/doc/snapshots_1.png)
