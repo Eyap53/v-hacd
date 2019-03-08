@@ -32,7 +32,7 @@ A second approach consists in computing an exact convex decomposition of a surfa
 1. Note that the processing may take some time.  Increasing voxel resolution will particularly increase runtime.
 
 # Finding the Addon in the interface
-If you can't find the addon in the interface, look at the right hand side while in Object mode, in the top right next to teh viewpoint widget you should see a small arrow and be able to drag out a view with some tabs that will at least include "View", but also hopefully VHACD itself here.
+If you can't find the addon in the interface, look at the right hand side while in Object mode, in the top right next to the viewpoint widget you should see a small arrow and be able to drag out a view with some tabs that will at least include "View", but also hopefully VHACD itself here.
 
 ![before](before.png "on the right hand side in blender, before pulling it out")
 ![after](after.png "on the right hand side in blender, after pulling it out")
