@@ -12,14 +12,14 @@ A second approach consists in computing an exact convex decomposition of a surfa
 
 ![ACD vs. ECD](https://raw.githubusercontent.com/kmammou/v-hacd/master/doc/ecdvsacd.png)
 
-# Installing the Package
+# Installing the package
 
 1. Clone this Github repository
 1. You may either rebuild the binaries for your machine or use the provided binaries.  Here we will assume that you will use the provided binaries in the v-hacd/bin directory.
-1. Copy the Python script in v-hacd/add-ons/blender/object_vhacd.py to your Blender addons directory.  For Blender 2.8 this directory will be "Blender Foundation/Blender/2.8/scripts/addons/".  You're at the right place if you see other scripts prefixed with object\_.
+1. Copy the Python script in v-hacd/add-ons/blender/object_vhacd.py to your Blender addons directory.  For Blender 2.80 this directory will be "Blender Foundation/Blender/2.80/scripts/addons/".  You're at the right place if you see other scripts prefixed with object\_.
 1. The addon must be enabled before use.  After copying the script to the addons directory, open Blender and navigate to File > User Preferences > Add-ons.  Object: V-HACD will be featured on the list.  Check its mark to enable the addon and save user settings.
 
-# Using the Addon
+# Using the addon
 
 1. After you have enabled the addon, the V-HACD menu will appear in the object menu when an object is selected.
 1. Go to this menu and select a preset (or leave the path presets).
@@ -31,13 +31,13 @@ A second approach consists in computing an exact convex decomposition of a surfa
 1. Modify the options as desired and select "OK."
 1. Note that the processing may take some time.  Increasing voxel resolution will particularly increase runtime.
 
-# Finding the Addon in the interface
+# Finding the addon in the interface
 If you can't find the addon in the interface, look at the right hand side while in Object mode, in the top right next to the viewpoint widget you should see a small arrow and be able to drag out a view with some tabs that will at least include "View", but also hopefully VHACD itself here.
 
 ![before](before.png "on the right hand side in blender, before pulling it out")
 ![after](after.png "on the right hand side in blender, after pulling it out")
 
-# Parameters 
+# Command-line parameters 
 | Parameter name | Description | Default value | Range |
 | ------------- | ------------- | ------------- | ---- |
 | resolution | maximum number of voxels generated during the voxelization stage	| 100,000 | 10,000-64,000,000 |
