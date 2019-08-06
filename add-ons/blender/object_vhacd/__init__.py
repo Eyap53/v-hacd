@@ -218,7 +218,7 @@ class VHACD(bpy.types.Operator):
             logFileName = os_path.join(data_path, '{}_log.txt'.format(filename))
 
             
-            mesh = ob.to_mesh(depsgraph = context.depsgraph, apply_modifiers = True)
+            mesh = ob.to_mesh(preserve_all_data_layers = False, depsgraph = context.evaluated_depsgraph_get())
 
             translation, quaternion, scale = ob.matrix_world.decompose()
             scale_matrix = Matrix(((scale.x,0,0,0),(0,scale.y,0,0),(0,0,scale.z,0),(0,0,0,1)))
@@ -319,7 +319,7 @@ class VHACD(bpy.types.Operator):
                 hull.name = hull.name.replace('ShapeIndexedFaceSet', new_name)
                 hull.data.name = hull.data.name.replace('ShapeIndexedFaceSet', new_name)
 
-        if len(new_objects) > 0:
+        if new_objects > 0:
             for ob in new_objects:
                 ob.select_set(state = True)
         else:
@@ -382,7 +382,7 @@ class VHACD(bpy.types.Operator):
 class VIEW3D_PT_tools_vhacd(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'VHACD'
+    bl_category = 'V-HACD'
     bl_label = 'V-HACD'
     bl_context = 'objectmode'
     bl_options = {'DEFAULT_CLOSED'}
