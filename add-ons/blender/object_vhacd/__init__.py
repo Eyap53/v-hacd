@@ -218,7 +218,10 @@ class VHACD(bpy.types.Operator):
             logFileName = os_path.join(data_path, '{}_log.txt'.format(filename))
 
             
-            mesh = ob.to_mesh(preserve_all_data_layers = False, depsgraph = context.evaluated_depsgraph_get())
+            # mesh = ob.to_mesh(preserve_all_data_layers = False, depsgraph = context.evaluated_depsgraph_get())
+            depsgraph = context.evaluated_depsgraph_get()
+            object_eval = ob.evaluated_get(depsgraph)
+            mesh = bpy.data.meshes.new_from_object(object_eval)
 
             translation, quaternion, scale = ob.matrix_world.decompose()
             scale_matrix = Matrix(((scale.x,0,0,0),(0,scale.y,0,0),(0,0,scale.z,0),(0,0,0,1)))
@@ -306,7 +309,7 @@ class VHACD(bpy.types.Operator):
                         if self.mass_com:
                             for vert in mesh.vertices:
                                 vert.co -= com
-                        obc = bpy.data.objects.new(ob.name + '_GM', mesh)
+                        obc = bpy.data.objects.new(name=ob.name + '_GM', object_data=mesh)
                         bpy.context.collection.objects.link(obc)
                         obc.parent = parent
                         new_objects.append(obc)
@@ -319,7 +322,7 @@ class VHACD(bpy.types.Operator):
                 hull.name = hull.name.replace('ShapeIndexedFaceSet', new_name)
                 hull.data.name = hull.data.name.replace('ShapeIndexedFaceSet', new_name)
 
-        if new_objects > 0:
+        if new_objects:
             for ob in new_objects:
                 ob.select_set(state = True)
         else:
